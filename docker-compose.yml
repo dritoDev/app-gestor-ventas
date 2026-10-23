@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gestor_ventas
+      POSTGRES_USER: gestor
+      POSTGRES_PASSWORD: gestor
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gestor -d gestor_ventas']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4
+    restart: unless-stopped
+    command: ['start-dev', '--import-realm']
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      # Fija el issuer de los tokens: http://localhost:8081/realms/mercato
+      KC_HOSTNAME: http://localhost:8081
+      KC_HEALTH_ENABLED: 'true'
+    ports:
+      - '8081:8080'
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak/mercato-realm.json:/opt/keycloak/data/import/mercato-realm.json:ro
+
+volumes:
+  postgres_data:
+  keycloak_data:

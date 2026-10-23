@@ -1,0 +1,17 @@
+{
+  "name": "gestor-ventas",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "dev": "corepack pnpm --parallel --filter @gestor/api --filter @gestor/web dev",
+    "build": "corepack pnpm --filter @gestor/shared build && corepack pnpm --filter @gestor/db build && corepack pnpm --filter @gestor/api build && corepack pnpm --filter @gestor/web build",
+    "typecheck": "corepack pnpm -r typecheck",
+    "test": "corepack pnpm --filter @gestor/shared test && corepack pnpm --filter @gestor/api test",
+    "db:generate": "corepack pnpm --filter @gestor/db generate",
+    "db:migrate": "corepack pnpm --filter @gestor/db migrate",
+    "db:seed": "corepack pnpm --filter @gestor/db seed"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

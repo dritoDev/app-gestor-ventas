@@ -1,0 +1,314 @@
+{
+  "realm": "mercato",
+  "enabled": true,
+  "displayName": "Mercato",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "offlineSessionMaxLifespanEnabled": false,
+  "offlineSessionMaxLifespan": 5184000,
+  "clientOfflineSessionIdleTimeout": 2592000,
+  "clientOfflineSessionMaxLifespan": 5184000,
+  "clientScopes": [
+    {
+      "name": "mcp:read",
+      "description": "Lectura de catálogo, ventas, inventario y panel a través de MCP",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Consultar productos, ventas, inventario e indicadores"
+      }
+    },
+    {
+      "name": "mcp:write",
+      "description": "Escrituras a través de MCP (ventas, productos e inventario)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Crear ventas, productos y ajustar inventario"
+      }
+    },
+    {
+      "name": "basic",
+      "description": "OpenID Connect basic scope (sub)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "profile",
+      "description": "OpenID Connect profile scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "email",
+      "description": "OpenID Connect email scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "roles",
+      "description": "OpenID Connect roles scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "web-origins",
+      "description": "OpenID Connect web-origins scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "acr",
+      "description": "OpenID Connect acr scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "address",
+      "description": "OpenID Connect address scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "phone",
+      "description": "OpenID Connect phone scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "offline_access",
+      "description": "OpenID Connect offline_access scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "microprofile-jwt",
+      "description": "MicroProfile JWT scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "mercato-mcp",
+      "name": "Mercato MCP (Authorization Code + PKCE)",
+      "description": "Cliente público para MCP Inspector y otros clientes MCP con PKCE S256",
+      "protocol": "openid-connect",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "consentRequired": false,
+      "redirectUris": [
+        "http://localhost:6274/oauth/callback",
+        "http://localhost:6274/callback",
+        "http://127.0.0.1:6274/oauth/callback",
+        "http://127.0.0.1:6274/callback",
+        "http://localhost:6274/*"
+      ],
+      "webOrigins": [
+        "http://localhost:6274",
+        "http://127.0.0.1:6274"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:6274/*",
+        "oauth2.device.authorization.grant.enabled": "false"
+      },
+      "defaultClientScopes": [
+        "mcp:read",
+        "mcp:write",
+        "basic",
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "offline_access"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "microprofile-jwt"
+      ],
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "mcp-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "http://localhost:4000/mcp",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "mercato-user-id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "mercato_user_id",
+            "claim.name": "mercato_user_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "mercato-cli",
+      "name": "Mercato CLI (password grant, solo desarrollo)",
+      "description": "Cliente público para obtener tokens de prueba con curl/scripts. Deshabilitar en producción.",
+      "protocol": "openid-connect",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "consentRequired": false,
+      "redirectUris": [
+        "http://localhost:6274/oauth/callback",
+        "http://localhost:6274/callback",
+        "http://127.0.0.1:6274/oauth/callback",
+        "http://127.0.0.1:6274/callback"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": [
+        "mcp:read",
+        "mcp:write",
+        "basic",
+        "profile",
+        "email",
+        "roles",
+        "offline_access"
+      ],
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "mcp-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "http://localhost:4000/mcp",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "mercato-user-id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "mercato_user_id",
+            "claim.name": "mercato_user_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "fc3be0dc-66c4-4a2b-aded-a58509d4f2d0",
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "admin@tienda.local",
+      "firstName": "Admin",
+      "lastName": "Mercato",
+      "realmRoles": [
+        "offline_access"
+      ],
+      "attributes": {
+        "mercato_user_id": [
+          "fc3be0dc-66c4-4a2b-aded-a58509d4f2d0"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "miclavesegura2026",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}
