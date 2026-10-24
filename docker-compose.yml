@@ -15,6 +15,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - app-network
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.4
@@ -31,7 +33,74 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak/mercato-realm.json:/opt/keycloak/data/import/mercato-realm.json:ro
+    networks:
+      - app-network
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: unless-stopped
+    environment:
+      # Configuración básica
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:5678/
+      GENERIC_TIMEZONE: Europe/Madrid
+      
+      # Base de datos (usa la misma PostgreSQL)
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: gestor_ventas
+      DB_POSTGRESDB_USER: gestor
+      DB_POSTGRESDB_PASSWORD: gestor
+      
+      # Habilitar MCP (Instance-level MCP Server)
+      N8N_MCP_ENABLED: 'true'
+      # N8N_MCP_SERVER_URL se configura en la UI o via API key
+      
+      # Configuración de ejecución
+      EXECUTIONS_MODE: regular
+      N8N_PAYLOAD_SIZE_MAX: 16
+      N8N_LOG_LEVEL: info
+      
+      # Permitir OAuth para MCP clients (Claude Desktop, etc.)
+      N8N_OAUTH2_ENABLED: 'true'
+      
+      # Configuración para desarrollo local
+      N8N_SECURE_COOKIE: 'false'
+      N8N_COOKIE_SAME_SITE_POLICY: lax
+      
+      # Habilitar diagnósticos y métricas
+      N8N_DIAGNOSTICS_ENABLED: 'false'
+      
+      # Clave de encriptación (generar con: openssl rand -hex 32)
+      # N8N_ENCRYPTION_KEY: 'tu-clave-de-32-bytes-aqui'
+      
+    ports:
+      - '5678:5678'
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Permite montar workflows locales para desarrollo
+      - ./n8n/workflows:/home/node/.n8n/workflows:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q --spider http://localhost:5678/healthz || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:
   keycloak_data:
+  n8n_data:
