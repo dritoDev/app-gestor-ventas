@@ -301,14 +301,7 @@
         "mercato_user_id": [
           "fc3be0dc-66c4-4a2b-aded-a58509d4f2d0"
         ]
-      },
-      "credentials": [
-        {
-          "type": "password",
-          "value": "miclavesegura2026",
-          "temporary": false
-        }
-      ]
+      }
     }
   ]
 }
